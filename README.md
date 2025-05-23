@@ -54,22 +54,22 @@
 
 ## 📁 Project Structure
 
-b-place/
-│
-├── app.py # Main Flask app
-├── users.json # Auto-created for storing user accounts
-├── canvas.json # Auto-created to store canvas pixel data
-│
-├── templates/ # HTML templates
-│ ├── home.html
-│ ├── login.html
-│ ├── register.html
-│ └── index.html
-│
-├── static/
-│ ├── css/style.css # Styles
-│ └── js/app.js # Canvas logic + cooldown
-└──────────────────────────────────────── more comming soon
+#b-place/
+#│
+#├── app.py # Main Flask app
+#├── users.json # Auto-created for storing user accounts
+#├── canvas.json # Auto-created to store canvas pixel data
+#│
+#├── templates/ # HTML templates
+#│ ├── home.html
+#│ ├── login.html
+#│ ├── register.html
+#│ └── index.html
+#│
+#├── static/
+#│ ├── css/style.css # Styles
+#│ └── js/app.js # Canvas logic + cooldown
+#└──────────────────────────────────────── more comming soon
 
 ---
 
