@@ -70,6 +70,7 @@ b-place/
 ├── static/
 │   ├── css/style.css     # Styles
 │   └── js/app.js         # Canvas logic + cooldown
+└───────────────────────────────────────────────────────────────── updates soon
 ```
 
 ---
