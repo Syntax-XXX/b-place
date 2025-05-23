@@ -88,4 +88,4 @@ MIT — free to use, modify, and share.
 
 ---
 
-## ❤️ Built with love by [Your Name or Username]
+## ❤️ Built with love by Syntax-XXX
