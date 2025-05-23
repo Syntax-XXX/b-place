@@ -2,8 +2,6 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     text-align: center;
-    margin: 0;
-    padding: 0;
 }
 .container {
     padding: 20px;
@@ -11,24 +9,26 @@ body {
 canvas {
     border: 2px solid #333;
     image-rendering: pixelated;
-    margin: 20px 0;
 }
-.toolbar {
+.btn {
+    padding: 10px 20px;
+    background: #333;
+    color: white;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+}
+.color-picker {
     margin: 10px;
 }
-.btn, select {
-    padding: 10px 15px;
-    margin: 5px;
-    border: none;
-    background-color: #333;
-    color: white;
+.color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    border: 1px solid #000;
     cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
 }
-.btn:hover {
-    background-color: #555;
-}
-.buttons {
-    margin-top: 20px;
+.color-box.selected {
+    border: 2px solid red;
 }

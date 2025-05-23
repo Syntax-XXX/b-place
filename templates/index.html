@@ -7,20 +7,12 @@
 <body>
     <div class="container">
         <h1>B-Place Canvas</h1>
-        <div>
-            <canvas id="canvas" width="128" height="128"></canvas>
+        <div class="canvas-wrapper">
+            <canvas id="canvas" width="500" height="500" style="width: 1000px; height: 1000px;"></canvas>
+<script>const canvasSize = 500;</script>
         </div>
-        <div class="toolbar">
-            <label>Select color:</label>
-            <select id="colorPicker">
-                <option value="0">White</option>
-                <option value="1">Black</option>
-                <option value="2">Red</option>
-                <option value="3">Green</option>
-                <option value="4">Blue</option>
-            </select>
-            <p id="cooldownMsg"></p>
-        </div>
+        <div id="colorPicker" class="color-picker"></div>
+        <p id="cooldownMsg"></p>
         <a href="/logout" class="btn">Logout</a>
     </div>
     <script src="/static/js/app.js"></script>

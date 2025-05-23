@@ -1,32 +1,26 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
+import time
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 USERS_FILE = 'users.json'
 CANVAS_FILE = 'canvas.json'
+COOLDOWNS_FILE = 'cooldowns.json'
+CANVAS_SIZE = 500
 
-def load_users():
-    if not os.path.exists(USERS_FILE):
-        return {}
-    with open(USERS_FILE, 'r') as f:
+def load_data(file, default):
+    if not os.path.exists(file):
+        return default
+    with open(file, 'r') as f:
         return json.load(f)
 
-def save_users(users):
-    with open(USERS_FILE, 'w') as f:
-        json.dump(users, f)
-
-def load_canvas():
-    if not os.path.exists(CANVAS_FILE):
-        return [[0 for _ in range(128)] for _ in range(128)]
-    with open(CANVAS_FILE, 'r') as f:
-        return json.load(f)
-
-def save_canvas(canvas):
-    with open(CANVAS_FILE, 'w') as f:
-        json.dump(canvas, f)
+def save_data(file, data):
+    with open(file, 'w') as f:
+        json.dump(data, f)
 
 @app.route('/')
 def home():
@@ -36,19 +30,18 @@ def home():
 def index():
     if 'username' not in session:
         return redirect('/login')
-    canvas = load_canvas()
-    return render_template('index.html', canvas=canvas)
+    return render_template('index.html', canvas_size=CANVAS_SIZE)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        users = load_users()
+        users = load_data(USERS_FILE, {})
         if username in users:
             return 'User already exists!'
-        users[username] = password
-        save_users(users)
+        users[username] = generate_password_hash(password)
+        save_data(USERS_FILE, users)
         return redirect('/login')
     return render_template('register.html')
 
@@ -57,8 +50,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        users = load_users()
-        if users.get(username) == password:
+        users = load_data(USERS_FILE, {})
+        if username in users and check_password_hash(users[username], password):
             session['username'] = username
             return redirect('/canvas')
         return 'Invalid credentials'
@@ -67,23 +60,39 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return redirect('/login')
+    return redirect('/')
 
 @app.route('/update_pixel', methods=['POST'])
 def update_pixel():
     if 'username' not in session:
         return 'Not logged in', 403
-    x = int(request.json['x'])
-    y = int(request.json['y'])
-    color = int(request.json['color'])
-    canvas = load_canvas()
+
+    data = request.get_json()
+    x = int(data.get('x', -1))
+    y = int(data.get('y', -1))
+    color = int(data.get('color', 0))
+
+    if not (0 <= x < CANVAS_SIZE and 0 <= y < CANVAS_SIZE):
+        return 'Invalid coordinates', 400
+
+    cooldowns = load_data(COOLDOWNS_FILE, {})
+    now = time.time()
+    user = session['username']
+    if user in cooldowns and now - cooldowns[user] < 30:
+        return 'Cooldown active', 429
+
+    canvas = load_data(CANVAS_FILE, [[0]*CANVAS_SIZE for _ in range(CANVAS_SIZE)])
     canvas[y][x] = color
-    save_canvas(canvas)
+    save_data(CANVAS_FILE, canvas)
+
+    cooldowns[user] = now
+    save_data(COOLDOWNS_FILE, cooldowns)
+
     return 'OK'
 
 @app.route('/get_canvas')
 def get_canvas():
-    return jsonify(load_canvas())
+    return jsonify(load_data(CANVAS_FILE, [[0]*CANVAS_SIZE for _ in range(CANVAS_SIZE)]))
 
 if __name__ == '__main__':
     app.run(debug=True)
